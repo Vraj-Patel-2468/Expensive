@@ -1,0 +1,7 @@
+*.properties
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*.env
