@@ -1,8 +1,12 @@
 package com.expensive.api.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.expensive.api.dto.UserDto;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -16,11 +20,13 @@ public class UserService {
     
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final ModelMapper modelMapper;
 
     @Autowired 
-    public UserService(UserRepository userRepository, EmailService emailService) {
+    public UserService(UserRepository userRepository, EmailService emailService, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.emailService = emailService;
+        this.modelMapper = modelMapper;
     }
 
     public UserDetails loadByUserName(String email) {
@@ -76,5 +82,47 @@ public class UserService {
             code.append(characters.charAt(index));
         }
         return code.toString();
+    }
+
+    public List<UserDto> getAllUsers() {
+        List<User> usersList = userRepository.findAll();
+        List<UserDto> userDtosList = usersList
+                .stream()
+                .map(user -> modelMapper.map(user, UserDto.class))
+                .toList();
+        if(userDtosList.isEmpty()) {
+            throw new RuntimeException("No Users are created.");
+        }
+        return userDtosList;
+    }
+
+    public UserDto getUserById(long id) {
+        Optional<User> user = userRepository.findById(id);
+        if(user.isEmpty()) {
+            throw new RuntimeException("The User does not exist.");
+        }
+        return modelMapper.map(user.get(), UserDto.class);
+    }
+
+    public UserDto updateUser(long id, UserDto userDto) {
+        Optional<User> user = userRepository.findById(id);
+        if(user.isEmpty()) {
+            throw new RuntimeException("The User does not exist.");
+        }
+
+        User userToUpdate = modelMapper.map(userDto, User.class);
+
+        User updatedUser = userRepository.save(userToUpdate);
+        return modelMapper.map(updatedUser, UserDto.class);
+    }
+
+    public UserDto deleteUser(long id) {
+        Optional<User> user = userRepository.findById(id);
+        if(user.isEmpty()) {
+            throw new RuntimeException("The User does not exist.");
+        }
+        User userToDelete = user.get();
+        userRepository.delete(userToDelete);
+        return modelMapper.map(userToDelete, UserDto.class);
     }
 }

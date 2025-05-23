@@ -52,7 +52,6 @@ public class AuthController {
         return authenticationService.loginUser(loginReqDto);        
     }
 
-
     @PutMapping(path = "/verify")
     public ResponseEntity<MessageDto> verifyUser(@RequestParam("username") String username) {
         return new ResponseEntity<> (userService.verifyUser(username), HttpStatus.ACCEPTED);

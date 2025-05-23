@@ -1,14 +1,16 @@
 package com.expensive.api.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.expensive.api.dto.UserDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.expensive.api.services.UserService;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 
 
 @RestController
@@ -22,15 +24,25 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(path = "/welcome")
-    public String welocmeTest() {
-        return new String("The backend is initialized");
+    @GetMapping(path = "/")
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/user")
-    public String getAllUsers() {
-        return "List of all users";
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable  long id) {
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
-    
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable long id, @RequestBody UserDto userDto) {
+        return new ResponseEntity<>(userService.updateUser(id, userDto), HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<UserDto> deleteUser(@PathVariable long id) {
+        UserDto userdto = userService.deleteUser(id);
+        return new ResponseEntity<>(userdto, HttpStatus.OK);
+    }
 
 }
