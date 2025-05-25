@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String name;
     private LocalDateTime createdAt;

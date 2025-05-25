@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class ExpenseSplit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     
     @ManyToOne
     @JoinColumn(name = "expenseId")
